@@ -175,7 +175,7 @@ class Ui_MainWindow(object):
         self.label.setText(_translate("MainWindow", "<html><head/><body><p>Задача:     </p></body></html>"))
         self.label_2.setText(_translate("MainWindow", "<html><head/><body><p>Тип графа: </p></body></html>"))
         self.label_4.setText(_translate("MainWindow", "Значение поиска: "))
-        self.label_3.setText(_translate("MainWindow", "<html><head/><body><p><a href=\"https://github.com/JKearnsl/transport_task\"><span style=\" color:#2980b9;\">GitHub </span></a>2023</p></body></html>"))
+        self.label_3.setText(_translate("MainWindow", "<html><head/><body><p><a href=\"https://github.com/JKearnsl/search_in_graph\"><span style=\" text-decoration: underline; color:#2980b9;\">GitHub </span></a>2023</p></body></html>"))
         self.groupBox.setTitle(_translate("MainWindow", "Связи графа"))
         self.rmVertexButton.setText(_translate("MainWindow", "-"))
         self.addVertexButton.setText(_translate("MainWindow", "+"))
