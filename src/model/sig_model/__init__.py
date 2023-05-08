@@ -50,7 +50,7 @@ class SIGModel:
 
             if self._search_value:
                 is_found, self._search_time, self._visited_path = dfs(
-                    self.graph_links, self._search_value, self._search_value
+                    self.graph_links, self._graph_links[0][0], self._search_value, self.graph_type
                 )
                 if is_found:
                     graph.style_node(self._search_value, node_color='red', node_size=500)
