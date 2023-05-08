@@ -49,7 +49,9 @@ class SIGModel:
             graph.style_node(start_vertex, node_color='aquamarine', node_size=500)
 
             if self._search_value:
-                is_found, self._search_time, self._visited_path = dfs(self.graph_links, self._search_value, self._search_value)
+                is_found, self._search_time, self._visited_path = dfs(
+                    self.graph_links, self._search_value, self._search_value
+                )
                 if is_found:
                     graph.style_node(self._search_value, node_color='red', node_size=500)
 
@@ -61,13 +63,6 @@ class SIGModel:
 
         vertexes = list(OrderedDict.fromkeys([vertex for link in self._graph_links for vertex in link]))
         table: list[list[str]] = [["-"] * len(vertexes) for i in range(len(vertexes))]
-        # for vertex in vertexes:
-        #     for el in self.graph_links:
-        #         if vertex in el and vertex not in table:
-        #             table[vertex] = []
-        #
-        #         if vertex == el[0]:
-        #             table[vertex].append(el[1])
 
         for i in range(len(vertexes)):
             for j in range(len(vertexes)):
