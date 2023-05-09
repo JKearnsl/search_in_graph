@@ -44,6 +44,5 @@ def dfs(graph: list[tuple], start_vertex, search_value, graph_type: GraphType = 
             is_found = True
             break
     end_time = time.time()
-    print(path)
 
     return is_found, (end_time - start_time) * 1000, path
