@@ -68,6 +68,7 @@ class SIGModel:
             for j in range(len(vertexes)):
                 if (vertexes[i], vertexes[j]) in self._visited_path:
                     table[i][j] = "+"
+                    table[j][i] = "+"
         return table, vertexes
 
     @property
