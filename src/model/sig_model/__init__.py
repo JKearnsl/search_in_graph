@@ -3,7 +3,6 @@ from collections import OrderedDict
 from src.model.enum.graph import GraphType, ShowAs
 from src.model.enum.problem import ProblemType
 from src.model.sig_model.dfs import dfs
-from src.utils.graph import Graph
 
 
 class SIGModel:
@@ -15,7 +14,6 @@ class SIGModel:
         self._show_as: ShowAs = ShowAs.FULL_GRAPH
         self._search_time = None
         self._visited_path = []
-        self._path = []
         self._search_value = None
         self._start_vertex = None
         self._is_found = False
@@ -38,10 +36,6 @@ class SIGModel:
     @property
     def show_as(self):
         return self._show_as
-
-    @property
-    def path(self):
-        return self._path
 
     @property
     def graph_type(self) -> GraphType:
@@ -79,13 +73,12 @@ class SIGModel:
             self.graph_links, self.start_vertex, self._search_value, self.graph_type
         )
 
-
     def search_path_table(self):
         if self._visited_path is None:
             return None, None
 
         vertexes = list(OrderedDict.fromkeys([vertex for link in self._graph_links for vertex in link]))
-        table: list[list[str]] = [["-"] * len(vertexes) for i in range(len(vertexes))]
+        table: list[list[str]] = [["-"] * len(vertexes) for _ in range(len(vertexes))]
 
         for i in range(len(vertexes)):
             for j in range(len(vertexes)):
@@ -110,12 +103,6 @@ class SIGModel:
     @search_value.setter
     def search_value(self, value: int):
         self._search_value = value
-        self.solve()
-        self.notify_observers()
-
-    @path.setter
-    def path(self, value):
-        self._path = value
         self.solve()
         self.notify_observers()
 
