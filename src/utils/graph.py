@@ -1,3 +1,5 @@
+import logging
+
 import networkx as nx
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -132,13 +134,21 @@ class Graph:
             verticalalignment=self._label_verticalalignment,
         )
         for node, style in self._node_style.items():
-            nx.draw_networkx_nodes(
-                self._G,
-                self._pos,
-                nodelist=[node],
-                **style,
-            )
+            try:
+                nx.draw_networkx_nodes(
+                    self._G,
+                    self._pos,
+                    nodelist=[node],
+                    **style,
+                )
+            except nx.NetworkXError:
+                logging.warning(f'Node {node} not found')
 
         if width and height:
             plt.gcf().set_size_inches(width, height)
         return FigureCanvas(plt.gcf())
+
+    def clear(self):
+        self._G.clear()
+        self._node_style.clear()
+        self._pos = None
