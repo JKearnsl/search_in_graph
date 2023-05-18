@@ -9,4 +9,3 @@ class GraphType(Enum):
 class ShowAs(Enum):
     FULL_GRAPH = "Исходный граф"
     VISITED_PATH = "Пройденный путь"
-    PATH = "Идеальный путь"
