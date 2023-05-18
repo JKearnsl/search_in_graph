@@ -80,8 +80,6 @@ class SIGView(QMainWindow, TransportSolutionDObserver, metaclass=TSMeta):
             graph_data = self.model.graph_links
         elif self.model.show_as == ShowAs.VISITED_PATH:
             graph_data = self.model.visited_path
-        elif self.model.show_as == ShowAs.PATH:
-            graph_data = self.model.path
         else:
             graph_data = []
 
