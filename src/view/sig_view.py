@@ -1,10 +1,11 @@
+import networkx
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QDoubleValidator, QStandardItemModel, QStandardItem, QColor
-from PyQt6.QtWidgets import QMainWindow, QAbstractItemView, QVBoxLayout, QWidget, QListWidgetItem, QGraphicsScene, \
-    QGraphicsProxyWidget
+from PyQt6.QtGui import QStandardItemModel, QStandardItem, QColor
+from PyQt6.QtWidgets import QMainWindow, QListWidgetItem, QGraphicsScene, QGraphicsProxyWidget, QListView
 
-from src.model.enum.graph import GraphType
+from src.model.enum.graph import GraphType, ShowAs
 from src.model.enum.problem import ProblemType
+from src.utils.graph import Graph
 from src.utils.observer import TransportSolutionDObserver
 from src.utils.ts_meta import TSMeta
 from src.view.MainWindow import Ui_MainWindow
@@ -32,6 +33,9 @@ class SIGView(QMainWindow, TransportSolutionDObserver, metaclass=TSMeta):
         for el in GraphType:
             self.ui.graphType.addItem(el.value, el)
 
+        for el in ShowAs:
+            self.ui.showAs.addItem(el.value, el)
+
         self.ui.inputGraph.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
         self.ui.inputGraph.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
 
@@ -46,7 +50,9 @@ class SIGView(QMainWindow, TransportSolutionDObserver, metaclass=TSMeta):
         # События
         self.ui.problemType.currentIndexChanged.connect(self.controller.input_problem_type)
         self.ui.graphType.currentIndexChanged.connect(self.controller.input_graph_type)
+        self.ui.showAs.currentIndexChanged.connect(self.controller.input_show_as)
         self.ui.searchValue.textChanged.connect(self.controller.input_search_value)
+        self.ui.startVertex.textChanged.connect(self.controller.input_start_vertex)
         self.ui.addVertexButton.clicked.connect(self.controller.add_link)
         self.ui.rmVertexButton.clicked.connect(self.controller.remove_link)
         self.ui.updateGraph.clicked.connect(self.controller.update_graph_canvas)
@@ -69,7 +75,37 @@ class SIGView(QMainWindow, TransportSolutionDObserver, metaclass=TSMeta):
             self.ui.inputGraph.setItemWidget(item, rgi_widget)
 
         # Перерисовка графа
-        self.model.graph_canvas().figure.clf()
+        graph = Graph(arrows=self.model.graph_type == GraphType.DIRECTED)
+        if self.model.show_as == ShowAs.FULL_GRAPH:
+            graph_data = self.model.graph_links
+        elif self.model.show_as == ShowAs.VISITED_PATH:
+            graph_data = self.model.visited_path
+        elif self.model.show_as == ShowAs.PATH:
+            graph_data = self.model.path
+        else:
+            graph_data = []
+
+        try:
+            graph.canvas().figure.clf()
+            graph.clear()
+        except networkx.exception.NetworkXError:
+            #
+            # Если очень быстро удаляется граф, то возникает ошибка
+            #
+            pass
+
+        for link in graph_data:
+            graph.add_edge(*link)
+
+        if graph_data:
+            if self.model.start_vertex:
+                vertices = [el[0] for el in graph_data] + [el[1] for el in graph_data]
+                if self.model.start_vertex in vertices:
+                    graph.style_node(self.model.start_vertex, node_color='aquamarine', node_size=500)
+
+            if self.model.search_value and self.model.is_found:
+                graph.style_node(self.model.search_value, node_color='red', node_size=500)
+
         scene = self.ui.outputGraph.scene()
         if scene is not None:
             for item in scene.items():
@@ -78,20 +114,21 @@ class SIGView(QMainWindow, TransportSolutionDObserver, metaclass=TSMeta):
         scene = QGraphicsScene()
         self.ui.outputGraph.setScene(scene)
         proxy_widget = QGraphicsProxyWidget()
-        proxy_widget.setWidget(self.model.graph_canvas(
-            width=self.ui.outputGraph.width()/self.ui.outputGraph.physicalDpiX()*1.5,
-            height=self.ui.outputGraph.height()/self.ui.outputGraph.physicalDpiY()*1.5,
+        proxy_widget.setWidget(graph.canvas(
+            width=self.ui.outputGraph.width() / self.ui.outputGraph.physicalDpiX() * 1.5,
+            height=self.ui.outputGraph.height() / self.ui.outputGraph.physicalDpiY() * 1.5,
         ))
         scene.addItem(proxy_widget)
 
         # Время поиска
         if self.model.search_time:
-            self.ui.searchTime.setText(f"Время поиска: {round(self.model.search_time, 6)} мс.")
+            self.ui.searchTime.setText(f"Время: {round(self.model.search_time, 6)} мс.")
 
         # Перерисовка таблицы
         table, vertexes = self.model.search_path_table()
 
-        if table is None:
+        if not table:
+            self.ui.outputTable.setColumnWidth(0, 50)
             return
 
         self.ui.outputTable.model().setRowCount(len(table))
@@ -103,6 +140,8 @@ class SIGView(QMainWindow, TransportSolutionDObserver, metaclass=TSMeta):
             for j, el in enumerate(row):
                 item = QStandardItem(str(el))
                 item.setEditable(False)
+                item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                self.ui.outputTable.setColumnWidth(j, 50)
                 if el == "+":
                     item.setBackground(QColor(0, 255, 0, 100))
                 self.ui.outputTable.model().setItem(i, j, item)
