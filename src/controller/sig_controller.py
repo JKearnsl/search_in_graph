@@ -27,6 +27,10 @@ class SIGController:
         value = self.view.ui.searchValue.text()
         self.model.search_value = value
 
+    def input_start_vertex(self):
+        value = self.view.ui.startVertex.text()
+        self.model.start_vertex = value
+
     def add_link(self):
         self.model.add_link('0', '0')
 
@@ -41,3 +45,7 @@ class SIGController:
 
     def update_graph_canvas(self):
         self.model.notify_observers()
+
+    def input_show_as(self):
+        _ = self.view.ui.showAs.currentData(Qt.ItemDataRole.UserRole)
+        self.model.show_as = _
