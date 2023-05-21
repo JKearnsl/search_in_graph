@@ -73,20 +73,20 @@ class SIGModel:
             self.graph_links, self.start_vertex, self._search_value, self.graph_type
         )
 
-    def search_path_table(self):
-        if self._visited_path is None:
+    def graph_table(self):
+        if self._graph_links is None:
             return None, None
 
-        vertexes = list(OrderedDict.fromkeys([vertex for link in self._graph_links for vertex in link]))
-        table: list[list[str]] = [["-"] * len(vertexes) for _ in range(len(vertexes))]
+        vertices = list(OrderedDict.fromkeys([vertex for link in self._graph_links for vertex in link]))
+        table: list[list[str]] = [["-"] * len(vertices) for _ in range(len(vertices))]
 
-        for i in range(len(vertexes)):
-            for j in range(len(vertexes)):
-                if (vertexes[i], vertexes[j]) in self._visited_path:
+        for i in range(len(vertices)):
+            for j in range(len(vertices)):
+                if (vertices[i], vertices[j]) in self.graph_links:
                     table[i][j] = "+"
                     if self._graph_type == GraphType.UNDIRECTED:
                         table[j][i] = "+"
-        return table, vertexes
+        return table, vertices
 
     @graph_type.setter
     def graph_type(self, value: GraphType):

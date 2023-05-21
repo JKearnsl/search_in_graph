@@ -123,7 +123,7 @@ class SIGView(QMainWindow, TransportSolutionDObserver, metaclass=TSMeta):
             self.ui.searchTime.setText(f"Время: {round(self.model.search_time, 6)} мс.")
 
         # Перерисовка таблицы
-        table, vertexes = self.model.search_path_table()
+        table, vertexes = self.model.graph_table()
 
         if not table:
             self.ui.outputTable.setColumnWidth(0, 50)
