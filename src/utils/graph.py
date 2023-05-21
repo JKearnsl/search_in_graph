@@ -59,7 +59,7 @@ class Graph:
 
         labels = nx.get_edge_attributes(self._G, 'label')
         if (from_vertex, to_vertex) in labels:
-            labels[(from_vertex, to_vertex)] += f", {label}"
+            labels[(from_vertex, to_vertex)] = f"{labels[(from_vertex, to_vertex)]}, {label}"
         self._G.add_edge(from_vertex, to_vertex, label=label)
         nx.set_edge_attributes(self._G, labels, 'label')
 
