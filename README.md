@@ -16,6 +16,9 @@
 
 ![image](https://user-images.githubusercontent.com/76239707/236921635-ce57a408-fd28-4473-82d1-1f67b703b83a.png)
 
+### Алгоритм поиска в глубину (ПВГ)
+
+https://github.com/JKearnsl/search_in_graph/blob/be8657dddd78106188e0b21c666b127ecfd72184/src/model/sig_model/dfs.py#L6-L47
 
 ### Сборка
 
